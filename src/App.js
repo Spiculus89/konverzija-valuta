@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { getExchangeRate } from './api/ExchangeRates';
 
 function App() {
   const [baseCurrency, setBaseCurrency] = useState("USD");
@@ -16,12 +17,18 @@ function App() {
     const rate = response.data.rates[targetCurrency];
     const convertedResult = amount * rate;
     setResult(convertedResult.toFixed(2));
+  };
 
+  const getRates = async () => {
     const exchangeRatesResponse = await axios.get(
       `https://openexchangerates.org/api/latest.json?app_id=ce68380549634012ad80823f202c6358&base=${baseCurrency}`
     );
     setExchangeRates(exchangeRatesResponse.data.rates);
-  };
+  }
+
+  useEffect(() => {
+    getRates()
+  }, [])
 
   const handleBaseCurrencyChange = (event) => {
     setBaseCurrency(event.target.value);
