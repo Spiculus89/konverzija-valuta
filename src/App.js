@@ -9,6 +9,7 @@ function App() {
   const [exchangeRates, setExchangeRates] = useState({});
   const [showTable, setShowTable] = useState(false);
   const [currencies, setCurrencies] = useState([]);
+  const [hideResults, setHideResults] = useState(false);
 
   const handleExchange = async () => {
     const response = await axios.get(
@@ -17,6 +18,7 @@ function App() {
     const rate = response.data.rates[targetCurrency];
     const convertedResult = amount * rate;
     setResult(convertedResult.toFixed(2));
+    setHideResults(false)
   };
 
   const getRates = async () => {
@@ -35,14 +37,17 @@ function App() {
 
   const handleBaseCurrencyChange = (event) => {
     setBaseCurrency(event.target.value);
+    setHideResults(true)
   };
 
   const handleTargetCurrencyChange = (event) => {
     setTargetCurrency(event.target.value);
+    setHideResults(true)
   };
 
   const handleAmountChange = (event) => {
     setAmount(event.target.value);
+    setHideResults(true)
   };
 
   const handleShowTable = () => {
@@ -119,11 +124,11 @@ function App() {
           </button>
         )}
       </div>
-      {result && (
+      {!hideResults ? (
         <div className="mt-4 text-center font-bold text-xl">
           {amount} {baseCurrency} = {result} {targetCurrency}
         </div>
-      )}
+      ) : null}
       {showTable && (
         <table className="table-auto mt-4 mx-auto">
           <thead>
