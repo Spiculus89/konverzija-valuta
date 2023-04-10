@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { getExchangeRate } from './api/ExchangeRates';
 
 function App() {
   const [baseCurrency, setBaseCurrency] = useState("USD");
@@ -9,6 +8,7 @@ function App() {
   const [result, setResult] = useState("");
   const [exchangeRates, setExchangeRates] = useState({});
   const [showTable, setShowTable] = useState(false);
+  const [currencies, setCurrencies] = useState([]);
 
   const handleExchange = async () => {
     const response = await axios.get(
@@ -24,6 +24,9 @@ function App() {
       `https://openexchangerates.org/api/latest.json?app_id=ce68380549634012ad80823f202c6358&base=${baseCurrency}`
     );
     setExchangeRates(exchangeRatesResponse.data.rates);
+    const keys = Object.keys(exchangeRatesResponse.data.rates);
+    const currs = [...currencies, ...keys]
+    setCurrencies(currs);
   }
 
   useEffect(() => {
@@ -63,8 +66,6 @@ function App() {
             onChange={handleBaseCurrencyChange}
           >
             <option value="USD">USD</option>
-            <option value="EUR">EUR</option>
-            <option value="GBP">GBP</option>
           </select>
         </div>
         <div className="mx-2">
@@ -77,9 +78,9 @@ function App() {
             value={targetCurrency}
             onChange={handleTargetCurrencyChange}
           >
-            <option value="EUR">EUR</option>
-            <option value="USD">USD</option>
-            <option value="GBP">GBP</option>
+            {
+              currencies.map((key)=><option value={key} key={key}>{key}</option>)
+            }
           </select>
         </div>
         <div className="ml-2">
